@@ -1,0 +1,245 @@
+package at.syntaxigel.proxysystem.manager;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.UUID;
+import java.util.logging.Level;
+
+import at.syntaxigel.proxysystem.ProxySystem;
+import at.syntaxigel.proxysystem.utils.UUIDFetcher;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
+
+public class LanguageManager {
+	
+	public String getLanguage(final UUID uuid) {
+		try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("SELECT language FROM player WHERE uuid = ?;")) {
+			preparedStatement.setString(1, uuid.toString());
+			ResultSet resultSet = preparedStatement.executeQuery();
+			
+			if (resultSet.next()) {
+				return resultSet.getString("language");
+			}
+			
+		} catch (SQLException sqlException) {
+			ProxySystem.getInstance().logger().log(Level.WARNING, ProxySystem.getInstance().configManager.getMessagePrefix() + "Die Sprache von dem Spieler §3" + UUIDFetcher.getName(uuid) + " §7konnte §cnicht §7abgefragt werden. Fehler: §c" + sqlException);
+		}
+		
+		return "de";
+	}
+
+    public void changeLanguage(final UUID uuid) {
+        if (getLanguage(uuid).equalsIgnoreCase("de")) {
+            try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("UPDATE player SET language = 'en' WHERE uuid = ?;")) {
+                preparedStatement.setString(1, uuid.toString());
+                preparedStatement.execute();
+            } catch (SQLException sqlException) {
+                ProxySystem.getInstance().logger().log(Level.WARNING, ProxySystem.getInstance().configManager.getMessagePrefix() + "Die Sprache von dem Spieler §3" + UUIDFetcher.getName(uuid) + " §7konnte §cnicht §7geändert werden auf Deutsch. Fehler: §c" + sqlException);
+            }
+        } else {
+            try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("UPDATE player SET language = 'de' WHERE uuid = ?;")) {
+                preparedStatement.setString(1, uuid.toString());
+                preparedStatement.execute();
+            } catch (SQLException sqlException) {
+                ProxySystem.getInstance().logger().log(Level.WARNING, ProxySystem.getInstance().configManager.getMessagePrefix() + "Die Sprache von dem Spieler §3" + UUIDFetcher.getName(uuid) + " §7konnte §cnicht §7geändert werden auf Englisch. Fehler: §c" + sqlException);
+            }
+        }
+    }
+
+	private File file;
+    private Configuration configuration;
+
+    public void createConfig() {
+        if (!(ProxySystem.getInstance().getDataFolder().exists())) {
+            ProxySystem.getInstance().getDataFolder().mkdirs();
+        }
+
+        file = new File(ProxySystem.getInstance().getDataFolder(), "messages.yml");
+
+        if (!(file.exists())) {
+            try {
+                file.createNewFile();
+                configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
+                
+                configuration.set("message.de.noPerm", "%prefix% Du hast dafür &ckeine &7Berechtigung!"); 
+                configuration.set("message.de.onUse", "%prefix% Verwende: /%command%"); 
+                configuration.set("message.de.onUseMoreArguments", "%prefix% Verwende: /%command% oder /%command% %arguments%");
+                configuration.set("message.en.noPerm", "%prefix% You &cdon't &7have authorization for this!");
+                configuration.set("message.en.onUse", "%prefix% Use: /%command%");
+                configuration.set("message.en.onUseMoreArguments", "%prefix% Use: /%command% or /%command% %arguments%");
+                configuration.set("message.de.noOnline", "%prefix% Der Spieler &3%player-name% &7ist derzeit &cnicht &7online!");
+                configuration.set("message.en.noOnline", "%prefix% The player &3%player-name% &7is currently &cnot &7online!");
+                configuration.set("message.de.pingCommand", "%prefix% Du hast einen Server Ping von &e%player-ping% &7ms.");
+                configuration.set("message.en.pingCommand", "%prefix% You have a server ping of &e%player-ping% &7ms.");
+                configuration.set("message.de.pingCommandTarget", "%prefix% Der Spieler &3%target-name% &7hat einen Server Ping von &e%target-ping% &7ms.");
+                configuration.set("message.en.pingCommandTarget", "%prefix% The player &3%target-name% &7has a server ping of &e%target-ping% &7ms.");
+                configuration.set("message.de.onlineCountOnePlayer", "%prefix% Es ist derzeit &e%playercount% &7Spieler online.");
+                configuration.set("message.en.onlineCountOnePlayer", "%prefix% There is currently &e%playercount% &7players online.");
+                configuration.set("message.de.onlineCountMoreThenOnePlayer", "%prefix% Es sind derzeit &e%playercount% &7Spieler online.");
+                configuration.set("message.en.onlineCountMoreThenOnePlayer", "%prefix% There are currently &e%playercount% &7players online.");
+                configuration.set("message.de.discord", "%prefix% Du kommst über diesen Discord Link: &3https://discord.gg/P5YsWk7qrG &7auf unseren Discord Server.");
+                configuration.set("message.en.discord", "%prefix% You come via this Discord link: &3https://discord.gg/P5YsWk7qrG &7to our Discord server.");
+                configuration.set("message.de.forum", "%prefix% Unser Forum: &3https://vanaty.de");
+                configuration.set("message.en.forum", "%prefix% Our forum: &3https://vanaty.de");
+                configuration.set("message.de.whereami", "%prefix% Du befindest dich derzeit auf dem &3%player-server% &7Server.");
+                configuration.set("message.en.whereami", "%prefix% Our forum: &3https://vanaty.de");
+                configuration.set("message.en.whereis", "%prefix% The player &3%player-name% &7is currently on the &3%player-server% &7server.");
+                configuration.set("message.de.whereis", "%prefix% Der Spieler &3%player-name% &7befindet sich derzeit auf dem &3%player-server% &7Server.");
+                configuration.set("message.de.coins", "%prefix% Du hast derzeit &e%player-coins% &7auf deinem Konto.");
+                configuration.set("message.en.coins", "%prefix% You currently have &e%player-coins% &7on your account.");
+                configuration.set("message.de.language", "%prefix% Du hast &aerfolgreich &7die Sprache geändert.");
+                configuration.set("message.en.language", "%prefix% You have &asuccessfully &7changed the language.");
+                configuration.set("message.de.globalmuteOn", "%prefix% Du hast &aerfolgreich &7den Globalenchat aktiviert.");
+                configuration.set("message.en.globalmuteOn", "%prefix% You have &asuccessfully &7activated the global chat.");
+                configuration.set("message.de.globalmuteOff", "%prefix% Du hast &aerfolgreich &7den Globalenchat deaktiviert.");
+                configuration.set("message.en.globalmuteOff", "%prefix% You have &asuccessfully &7disabled the global chat.");
+
+                ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, file);
+            } catch (IOException ioException) {
+                throw new RuntimeException(ioException);
+            }
+        }
+    } 
+    
+    public String getMessage(final String messageKey, final String language) {
+        try {
+            configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
+        } catch (IOException ioException) {
+            throw new RuntimeException(ioException);
+        }
+
+        String path = "message." + language + "." + messageKey;
+        String message = configuration.getString(path);
+
+        if (message == null && !language.equalsIgnoreCase("en")) {
+            path = "message.de." + messageKey;
+            message = configuration.getString(path);
+        }
+
+        if (message == null) {
+            message = messageKey;
+        }
+
+        return ChatColor.translateAlternateColorCodes('&', message).replace("%prefix%", ProxySystem.getInstance().configManager.getMessagePrefix()).replace("[>>]", "»").replace("[<<]", "«").replace("[|]", "|");
+    }
+
+    public String getLocalizedMessageTarget(final UUID playerUUID, final String messageKey, final ProxiedPlayer target) {
+        String playerLanguage = getLanguage(playerUUID);
+
+        String message = getMessage(messageKey, playerLanguage);
+
+        if (message == null) {
+            message = getMessage(messageKey, "de");
+        }
+
+        if (message.contains("%player-server%")) {
+            message = message.replace("%player-server%", target.getServer().getInfo().getName());
+        }
+
+        if (message.contains("%player-name%")) {
+            message = message.replace("%player-name%", target.getName());
+        }
+
+        return message;
+    }
+    
+    public String getLocalizedMessage(final UUID playerUUID, final String messageKey) {
+        String playerLanguage = getLanguage(playerUUID);
+
+        String message = getMessage(messageKey, playerLanguage);
+        
+        if (message == null) {
+            message = getMessage(messageKey, "de");
+        }
+        
+        if (message.contains("%player-ping%")) {
+            ProxiedPlayer player = ProxySystem.getInstance().getProxy().getPlayer(playerUUID);
+            if (player != null) {
+                String ping = String.valueOf(player.getPing());
+                message = message.replace("%player-ping%", ping);
+            } else {
+                message = message.replace("%player-ping%", "");
+            }
+        }
+
+        if (message.contains("%playercount%")) {
+            message = message.replace("%playercount%", String.valueOf(ProxySystem.getInstance().getProxy().getOnlineCount()));
+        }
+
+        return message;
+    }
+
+    public String getLocalizedMessagePlayerArgument(final UUID playerUUID, final String messageKey, final String name) {
+        String playerLanguage = getLanguage(playerUUID);
+
+        String message = getMessage(messageKey, playerLanguage);
+
+        if (message == null) {
+            message = getMessage(messageKey, "de");
+        }
+
+        if (message.contains("%player-name%")) {
+            message = message.replace("%player-name%", name);
+        }
+
+        if (message.contains("%target-name%")) {
+            message = message.replace("%target-name%", name);
+        }
+
+        if (message.contains("%target-ping%")) {
+            ProxiedPlayer target = ProxySystem.getInstance().getProxy().getPlayer(name);
+            if (target != null) {
+                String ping = String.valueOf(target.getPing());
+                message = message.replace("%target-ping%", ping);
+            } else {
+                message = message.replace("%target-ping%", "");
+            }
+        }
+
+        return message;
+    }
+
+    public String getLocalizedMessageOnUse(final UUID playerUUID, final String messageKey, final String command) {
+        String playerLanguage = getLanguage(playerUUID);
+
+        String message = getMessage(messageKey, playerLanguage);
+
+        if (message == null) {
+            message = getMessage(messageKey, "de");
+        }
+
+        if (message.contains("%command%")) {
+            message = message.replace("%command%", command);
+        }
+
+        return message;
+    }
+
+    public String getLocalizedMessageOnUseArguments(final UUID playerUUID, final String messageKey, final String command, final String arguments) {
+        String playerLanguage = getLanguage(playerUUID);
+
+        String message = getMessage(messageKey, playerLanguage);
+
+        if (message == null) {
+            message = getMessage(messageKey, "de");
+        }
+
+        if (message.contains("%command%")) {
+            message = message.replace("%command%", command);
+        }
+
+        if (message.contains("%arguments%")) {
+            message = message.replace("%arguments%", arguments);
+        }
+
+        return message;
+    }
+
+}

@@ -1,0 +1,6 @@
+name: ProxySystem
+version: 1.0
+author: SyntaxIgel
+main: at.syntaxigel.proxysystem.ProxySystem
+
+commands:
