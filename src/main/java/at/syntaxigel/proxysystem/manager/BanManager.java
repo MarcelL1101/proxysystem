@@ -46,8 +46,6 @@ public class BanManager {
     public void ban(UUID uuid, final String reason, final long seconds, final UUID bannedByUUID) {
         long end = 0;
 
-        if
-
         if (seconds == -1) {
             end = -1;
         } else {
