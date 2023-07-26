@@ -1,6 +1,7 @@
 package at.syntaxigel.proxysystem;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import at.syntaxigel.proxysystem.commands.*;
@@ -10,6 +11,7 @@ import at.syntaxigel.proxysystem.listener.PlayerListener;
 import at.syntaxigel.proxysystem.listener.ServerListener;
 import at.syntaxigel.proxysystem.manager.*;
 import at.syntaxigel.proxysystem.mysql.MySQL;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class ProxySystem extends Plugin {
@@ -51,6 +53,12 @@ public class ProxySystem extends Plugin {
 			throw new RuntimeException(e);
 		}
 
+		getInstance().getProxy().getScheduler().schedule(this, () -> {
+			for(final ProxiedPlayer all : getInstance().getProxy().getPlayers()) {
+				playerManager.updateTime(all.getUniqueId());
+			}
+		}, 0L, 1L, TimeUnit.MINUTES);
+
 		loadCommands();
 		loadListener();
 		
@@ -88,6 +96,10 @@ public class ProxySystem extends Plugin {
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new RegisteredPlayer("registered"));
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new BroadcastCommand("broadcast"));
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new BroadcastCommand("bc"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new BanCommand("ban"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new GetIPCommand("getip"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new OnlineTimeCommand("onlinetime"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new OnlineTimeCommand("ot"));
 	}
 	
 	private void loadListener() {

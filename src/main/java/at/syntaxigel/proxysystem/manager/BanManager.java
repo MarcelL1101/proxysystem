@@ -1,8 +1,11 @@
 package at.syntaxigel.proxysystem.manager;
 
 import at.syntaxigel.proxysystem.ProxySystem;
+import at.syntaxigel.proxysystem.utils.BanReason;
+import at.syntaxigel.proxysystem.utils.BanReasonsLoader;
 import at.syntaxigel.proxysystem.utils.UUIDFetcher;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,6 +13,13 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class BanManager {
+
+    private final Map<Integer, BanReason> banReasons;
+
+    public BanManager() {
+        File banReasonsFile = new File(ProxySystem.getInstance().getDataFolder(), "ban.json");
+        banReasons = BanReasonsLoader.loadBanReasons(banReasonsFile);
+    }
 
     public boolean isBanned(final UUID uuid) {
         boolean isBanend = false;
@@ -33,8 +43,10 @@ public class BanManager {
     }
 
     @SuppressWarnings("deprecation")
-    public void ban(UUID uuid, final String bannedName, final String reason, final long seconds, final UUID bannedByUUID, final String bannedByName) {
+    public void ban(UUID uuid, final String reason, final long seconds, final UUID bannedByUUID) {
         long end = 0;
+
+        if
 
         if (seconds == -1) {
             end = -1;
@@ -55,7 +67,20 @@ public class BanManager {
         }
 
         if (ProxySystem.getInstance().getProxy().getPlayer(uuid) != null) {
-            ProxySystem.getInstance().getProxy().getPlayer(uuid).disconnect(ProxySystem.getInstance().configManager.getMessageNoPlayer() + "Du wurdest von unserem Netzwerk gesperrt! \n\n §8» §7Ban ID §8| §e " + getBanID(uuid) + " \n §8» §7Grund §8|§e " + reason + "\n §8» §7Gebannt von §8|§e " + UUIDFetcher.getName(bannedByUUID) + "\n §8» §7Dauer §8|§e " + getRemainingTime(uuid) + "\n\n §8» §7Falls der Ban §cnicht §7gerechtfertigt ist dann kannst du einen Antrag im Forum stellen unter §ehttps://vanaty.de");
+            String messageKeyBanID = "banID";
+            String localizedMessageBanID = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessage(uuid, messageKeyBanID);
+            String messageKeyBanReason = "banReason";
+            String localizedMessageBanReason = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessage(uuid, messageKeyBanReason);
+            String messageKeyBannedBy = "banBannedby";
+            String localizedMessageBannedBy = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessage(uuid, messageKeyBannedBy);
+            String messageKeyBanDuration = "banDuration";
+            String localizedMessageBanDuration = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessage(uuid, messageKeyBanDuration);
+            String messageKeyLastLine = "banMessageLastLine";
+            String localizedMessageLastLine = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessage(uuid, messageKeyLastLine);
+            String messageKeyFirstLine = "banMessageFirstLine";
+            String localizedMessageFirstLine = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessage(uuid, messageKeyFirstLine);
+
+            ProxySystem.getInstance().getProxy().getPlayer(uuid).disconnect(localizedMessageFirstLine + "\n\n" + localizedMessageBanID + " \n" + localizedMessageBanReason + "\n" + localizedMessageBannedBy + "\n" + localizedMessageBanDuration + "\n\n" + localizedMessageLastLine);
         }
     }
 

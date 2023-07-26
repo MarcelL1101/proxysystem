@@ -37,6 +37,13 @@ public class PingCommand extends Command {
 				return;
 			}
 
+			if (name.equalsIgnoreCase(player.getName())) {
+				String messageKey = "pingCommand";
+				String localizedMessage = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessage(player.getUniqueId(), messageKey);
+				player.sendMessage(localizedMessage);
+				return;
+			}
+
 			String messageKey = "pingCommandTarget";
 			String localizedMessagePlayerArgument = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessagePlayerArgument(player.getUniqueId(), messageKey, name);
 			player.sendMessage(localizedMessagePlayerArgument);

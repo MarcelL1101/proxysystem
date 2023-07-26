@@ -45,4 +45,32 @@ public class PlayerManager {
 		}
 	}
 
+    public Integer getOnlineTime(final UUID uuid) {
+        try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("SELECT onlineTime FROM player WHERE uuid = ?;")) {
+            preparedStatement.setString(1, uuid.toString());
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getInt("onlineTime");
+            }
+
+            preparedStatement.close();
+            resultSet.close();
+        } catch (SQLException sqlException) {
+            throw new RuntimeException(sqlException);
+        }
+
+        return 0;
+    }
+
+    public void updateTime(final UUID uuid) {
+        try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("UPDATE player SET onlineTime = ? WHERE uuid = ?;")) {
+            preparedStatement.setInt(1, (getOnlineTime(uuid) + 1));
+            preparedStatement.setString(2, uuid.toString());
+            preparedStatement.execute();
+        } catch (SQLException sqlException) {
+            throw new RuntimeException(sqlException);
+        }
+    }
+
 }
