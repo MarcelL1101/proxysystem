@@ -7,10 +7,7 @@ import at.syntaxigel.proxysystem.commands.*;
 import at.syntaxigel.proxysystem.config.ConfigManager;
 import at.syntaxigel.proxysystem.config.MySQLConfigManager;
 import at.syntaxigel.proxysystem.listener.PlayerListener;
-import at.syntaxigel.proxysystem.manager.BanManager;
-import at.syntaxigel.proxysystem.manager.LanguageManager;
-import at.syntaxigel.proxysystem.manager.PlayerManager;
-import at.syntaxigel.proxysystem.manager.ServerManager;
+import at.syntaxigel.proxysystem.manager.*;
 import at.syntaxigel.proxysystem.mysql.MySQL;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -25,6 +22,7 @@ public class ProxySystem extends Plugin {
 	public PlayerManager playerManager;
 	public BanManager banManager;
 	public ServerManager serverManager;
+	public TeamManager teamManager;
 	
 	public MySQL mysql;
 	
@@ -38,6 +36,7 @@ public class ProxySystem extends Plugin {
 		playerManager = new PlayerManager();
 		banManager = new BanManager();
 		serverManager = new ServerManager();
+		teamManager = new TeamManager();
 		
 		configManager.createConfig();
 		mySQLConfigManager.createMySQLConfig();
@@ -77,6 +76,10 @@ public class ProxySystem extends Plugin {
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new GlobalMuteCommand("globalmute"));
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new WhereAmICommand("whereami"));
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new WhereIsCommand("whereis"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new TeamChatCommand("teamchat"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new TeamChatCommand("tc"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new AdminChatCommand("adminchat"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new AdminChatCommand("ac"));
 	}
 	
 	private void loadListener() {

@@ -100,6 +100,8 @@ public class LanguageManager {
                 configuration.set("message.en.globalmuteOn", "%prefix% You have &asuccessfully &7activated the global chat.");
                 configuration.set("message.de.globalmuteOff", "%prefix% Du hast &aerfolgreich &7den Globalenchat deaktiviert.");
                 configuration.set("message.en.globalmuteOff", "%prefix% You have &asuccessfully &7disabled the global chat.");
+                configuration.set("message.de.banReason", "%prefix% Ban Grund &8[|] &7%ban-reason%");
+                configuration.set("message.en.banReason", "%prefix% ");
 
                 ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, file);
             } catch (IOException ioException) {
