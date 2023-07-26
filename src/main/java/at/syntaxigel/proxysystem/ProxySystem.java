@@ -7,6 +7,7 @@ import at.syntaxigel.proxysystem.commands.*;
 import at.syntaxigel.proxysystem.config.ConfigManager;
 import at.syntaxigel.proxysystem.config.MySQLConfigManager;
 import at.syntaxigel.proxysystem.listener.PlayerListener;
+import at.syntaxigel.proxysystem.listener.ServerListener;
 import at.syntaxigel.proxysystem.manager.*;
 import at.syntaxigel.proxysystem.mysql.MySQL;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -80,10 +81,18 @@ public class ProxySystem extends Plugin {
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new TeamChatCommand("tc"));
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new AdminChatCommand("adminchat"));
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new AdminChatCommand("ac"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new BauserverCommand("bauserver"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new TeamCommand("team"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new GlobalClearCommand("globalclear"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new GlobalClearCommand("gcc"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new RegisteredPlayer("registered"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new BroadcastCommand("broadcast"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new BroadcastCommand("bc"));
 	}
 	
 	private void loadListener() {
 		ProxySystem.getInstance().getProxy().getPluginManager().registerListener(this, new PlayerListener());
+		ProxySystem.getInstance().getProxy().getPluginManager().registerListener(this, new ServerListener());
 	}
 	
 	public static ProxySystem getInstance() {

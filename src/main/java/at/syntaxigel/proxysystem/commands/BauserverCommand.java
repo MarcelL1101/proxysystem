@@ -5,9 +5,9 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
-public class WhereIsCommand extends Command {
+public class BauserverCommand extends Command {
 
-    public WhereIsCommand(String name) {
+    public BauserverCommand(String name) {
         super(name);
     }
 
@@ -21,37 +21,33 @@ public class WhereIsCommand extends Command {
 
         final ProxiedPlayer player = (ProxiedPlayer) sender;
 
-        if (!player.hasPermission("proxysystem.whereis")) {
+        if (!player.hasPermission("proxysystem.bauserver")) {
             String messageKey = "noPerm";
             String localizedMessage = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessage(player.getUniqueId(), messageKey);
             player.sendMessage(localizedMessage);
             return;
         }
 
-        if (args.length == 1) {
-            final String name = args[0];
-            final ProxiedPlayer target = ProxySystem.getInstance().getProxy().getPlayer(name);
+        if (!ProxySystem.getInstance().teamManager.isInTeam(player.getUniqueId())) {
+            ProxySystem.getInstance().teamManager.addToTeam(player.getUniqueId());
+            return;
+        }
 
-            if (target == null) {
-                String messageKey = "noOnline";
-                String localizedMessagePlayerArgument = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessagePlayerArgument(player.getUniqueId(), messageKey, name);
-                player.sendMessage(localizedMessagePlayerArgument);
-                return;
-            }
-
-            if (player.getName().equalsIgnoreCase(name)) {
-                String messageKey = "whereami";
+        if (args.length == 0) {
+            if (player.getServer().getInfo().getName().equalsIgnoreCase(ProxySystem.getInstance().configManager.getServerBauserver())) {
+                String messageKey = "alreadybauserver";
                 String localizedMessage = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessage(player.getUniqueId(), messageKey);
                 player.sendMessage(localizedMessage);
                 return;
             }
 
-            String messageKey = "whereis";
-            String localizedMessage = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageTarget(player.getUniqueId(), messageKey, target.getName());
+            player.connect(ProxySystem.getInstance().getProxy().getServerInfo(ProxySystem.getInstance().configManager.getServerBauserver()));
+            String messageKey = "bauserver";
+            String localizedMessage = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessage(player.getUniqueId(), messageKey);
             player.sendMessage(localizedMessage);
         } else {
-            String messageKey = "onUseMoreArguments";
-            String localizedMessage = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageOnUseArguments(player.getUniqueId(), messageKey, "whereis", "name");
+            String messageKey = "onUse";
+            String localizedMessage = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageOnUse(player.getUniqueId(), messageKey, "bauserver");
             player.sendMessage(localizedMessage);
         }
     }

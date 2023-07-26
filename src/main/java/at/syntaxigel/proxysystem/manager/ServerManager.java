@@ -50,4 +50,20 @@ public class ServerManager {
         }
     }
 
+    public int getPlayerCount() {
+        int playerCount = 0;
+        try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) as player_count FROM player")) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                playerCount = resultSet.getInt("player_count");
+            }
+
+        } catch (SQLException sqlException) {
+            ProxySystem.getInstance().logger().log(Level.WARNING, ProxySystem.getInstance().configManager.getMessagePrefix() + " Es konnte nicht abgefragt werden wie viele Spieler existierten. Fehler: §c" + sqlException);
+        }
+
+        return playerCount;
+    }
+
 }

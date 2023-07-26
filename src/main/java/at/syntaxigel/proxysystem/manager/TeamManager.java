@@ -44,6 +44,15 @@ public class TeamManager {
         }
     }
 
+    public void removeFromTeam(final UUID uuid) {
+        try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM team WHERE uuid = ?;")) {
+            preparedStatement.setString(1, uuid.toString());
+            preparedStatement.execute();
+        } catch (SQLException sqlException) {
+            ProxySystem.getInstance().logger().log(Level.WARNING, ProxySystem.getInstance().configManager.getMessagePrefix() + " Es ist ein Fehler aufgetreten beim löschen vom Team Mitglied. Fehler: §c" + sqlException);
+        }
+    }
+
     public Integer getBans(final UUID uuid) {
         try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("SELECT ban FROM team WHERE uuid = ?;")) {
             preparedStatement.setString(1, uuid.toString());

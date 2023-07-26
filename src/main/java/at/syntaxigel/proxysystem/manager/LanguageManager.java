@@ -100,8 +100,34 @@ public class LanguageManager {
                 configuration.set("message.en.globalmuteOn", "%prefix% You have &asuccessfully &7activated the global chat.");
                 configuration.set("message.de.globalmuteOff", "%prefix% Du hast &aerfolgreich &7den Globalenchat deaktiviert.");
                 configuration.set("message.en.globalmuteOff", "%prefix% You have &asuccessfully &7disabled the global chat.");
-                configuration.set("message.de.banReason", "%prefix% Ban Grund &8[|] &7%ban-reason%");
-                configuration.set("message.en.banReason", "%prefix% ");
+                configuration.set("message.de.bauserver", "%prefix% Du hast dich &aerfolgreich &7auf den Bauserver verbunden.");
+                configuration.set("message.en.bauserver", "%prefix% You have &successfully &7connected to the build server.");
+                configuration.set("message.de.alreadybauserver", "%prefix% Du bist bereits auf dem Bauserver.");
+                configuration.set("message.en.alreadybauserver", "%prefix% You are already on the build server.");
+                configuration.set("message.de.broadcast", "%prefix% Warnung &8[>>] &7%broadcast%");
+                configuration.set("message.en.broadcast", "%prefix% Warning &8[>>] &7%broadcast%");
+                configuration.set("message.de.globalclear", "%prefix% Du hast den Globalenchat geleert.");
+                configuration.set("message.en.globalclear", "%prefix% You have emptied the global chat.");
+                configuration.set("message.de.team", "%prefix% Zurzeit sind &e%teamcount% &7im Team.");
+                configuration.set("message.en.team", "%prefix% Currently, &e%teamcount% &7are in the team.");
+                configuration.set("message.de.teamAdd", "%prefix% Du hast &aerfolgreich &7den Spieler &3%player-name% &7zum Team hinzugefügt.");
+                configuration.set("message.en.teamAdd", "%prefix% You have &asuccessfully &7added the player &3%player-name% &7to the team.");
+                configuration.set("message.de.teamRemove", "%prefix% Du hast &aerfolgreich &7den Spieler &3%player-name% &7vom Team entfernt.");
+                configuration.set("message.en.teamRemove", "%prefix% You have &asuccessfully &7removed the player &3%player-name% &7from the team.");
+                configuration.set("message.de.teamAlready", "%prefix% Der Spieler &3%player-name% &7ist bereits im Team.");
+                configuration.set("message.en.teamAlready", "%prefix% The player &3%player-name% &7is already in the team.");
+                configuration.set("message.de.teamIsNot", "%prefix% Der Spieler &3%player-name% &7ist &cnicht &7im Team.");
+                configuration.set("message.en.teamIsNot", "%prefix% The player &3%player-name% &7is &cnot &7on the team.");
+                configuration.set("message.de.banCount", "&8[|] &7Gebannte Spieler &8[>>] &7%banCount%");
+                configuration.set("message.en.banCount", "&8[|] &7Banned Player &8[>>] &7%banCount%");
+                configuration.set("message.de.muteCount", "&8[|] &7Gemuted Spieler &8[>>] &7%muteCount%");
+                configuration.set("message.en.muteCount", "&8[|] &7Muted Player &8[>>] &7%muteCount%");
+                configuration.set("message.de.reportCount", "&8[|] &7Reports bearbeitet &8[>>] &7%reportCount%");
+                configuration.set("message.en.reportCount", "&8[|] &7Reports edited &8[>>] &7%reportCount%");
+                configuration.set("message.de.registeredPlayerCount", "%prefix% Es sind derzeit &e%player-count% &7Spieler registriert.");
+                configuration.set("message.en.registeredPlayerCount", "%prefix% There are currently &e%player-count% &7players registered.");
+                configuration.set("message.de.globalmute", "%prefix% Der Globalechat ist derzeit &cdeaktiviert&7.");
+                configuration.set("message.en.globalmute", "%prefix% Global chat is currently &cdeactivated&7.");
 
                 ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, file);
             } catch (IOException ioException) {
@@ -132,7 +158,7 @@ public class LanguageManager {
         return ChatColor.translateAlternateColorCodes('&', message).replace("%prefix%", ProxySystem.getInstance().configManager.getMessagePrefix()).replace("[>>]", "»").replace("[<<]", "«").replace("[|]", "|");
     }
 
-    public String getLocalizedMessageTarget(final UUID playerUUID, final String messageKey, final ProxiedPlayer target) {
+    public String getLocalizedMessageTarget(final UUID playerUUID, final String messageKey, final String playername) {
         String playerLanguage = getLanguage(playerUUID);
 
         String message = getMessage(messageKey, playerLanguage);
@@ -142,11 +168,24 @@ public class LanguageManager {
         }
 
         if (message.contains("%player-server%")) {
+            ProxiedPlayer target = ProxySystem.getInstance().getProxy().getPlayer(playername);
             message = message.replace("%player-server%", target.getServer().getInfo().getName());
         }
 
         if (message.contains("%player-name%")) {
-            message = message.replace("%player-name%", target.getName());
+            message = message.replace("%player-name%", playername);
+        }
+
+        if (message.contains("%banCount%")) {
+            message = message.replace("%banCount%", String.valueOf(ProxySystem.getInstance().teamManager.getBans(UUIDFetcher.getUUID(playername))));
+        }
+
+        if (message.contains("%muteCount%")) {
+            message = message.replace("%muteCount%", String.valueOf(ProxySystem.getInstance().teamManager.getMutes(UUIDFetcher.getUUID(playername))));
+        }
+
+        if (message.contains("%reportCount%")) {
+            message = message.replace("%reportCount%", String.valueOf(ProxySystem.getInstance().teamManager.getReports(UUIDFetcher.getUUID(playername))));
         }
 
         return message;
@@ -173,6 +212,30 @@ public class LanguageManager {
 
         if (message.contains("%playercount%")) {
             message = message.replace("%playercount%", String.valueOf(ProxySystem.getInstance().getProxy().getOnlineCount()));
+        }
+
+        if (message.contains("%teamcount%")) {
+            message = message.replace("%teamcount%", String.valueOf(ProxySystem.getInstance().teamManager.getTeamUUIDs().size()));
+        }
+
+        if (message.contains("%player-count%")) {
+            message = message.replace("%player-count%", String.valueOf(ProxySystem.getInstance().serverManager.getPlayerCount()));
+        }
+
+        return message;
+    }
+
+    public String getLocalizedMessages(final UUID playerUUID, final String messageKey, final String messages) {
+        String playerLanguage = getLanguage(playerUUID);
+
+        String message = getMessage(messageKey, playerLanguage);
+
+        if (message == null) {
+            message = getMessage(messageKey, "de");
+        }
+
+        if (message.contains("%broadcast%")) {
+            message = message.replace("%broadcast%", messages);
         }
 
         return message;
