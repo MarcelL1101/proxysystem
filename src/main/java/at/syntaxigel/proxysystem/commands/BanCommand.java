@@ -31,8 +31,39 @@ public class BanCommand extends Command {
 
         if (args.length == 2) {
             final String name = args[1];
+
+            if (ProxySystem.getInstance().banManager.isBanned(UUIDFetcher.getUUID(name))) {
+                String messageKey = "alreadyBanned";
+                String localizedMessage = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageTarget(player.getUniqueId(), messageKey, name);
+                player.sendMessage(localizedMessage);
+                return;
+            }
+
             if (args[0].equalsIgnoreCase("1")) {
-                ProxySystem.getInstance().banManager.ban(UUIDFetcher.getUUID(name), name, "Unerlaubt Clientmodifikationen", 2592000, player.getUniqueId(), player.getName());
+                ProxySystem.getInstance().banManager.ban(UUIDFetcher.getUUID(name), "Unerlaubt Clientmodifikationen", 2592000, player.getUniqueId());
+
+                for(final ProxiedPlayer team : ProxySystem.getInstance().getProxy().getPlayers()) {
+                    if (team.hasPermission("proxysystem.bansee")) {
+                        String messageKeyBanMessage = "banTeamMessage";
+                        String localizedMessageBanMessage = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageTarget(player.getUniqueId(), messageKeyBanMessage, name);
+                        String messageKeyBanID = "banID";
+                        String localizedMessageBanID = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageBanMute(player.getUniqueId(), messageKeyBanID, UUIDFetcher.getUUID(name));
+                        String messageKeyBanReason = "banReason";
+                        String localizedMessageBanReason = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageBanMute(player.getUniqueId(), messageKeyBanReason, UUIDFetcher.getUUID(name));
+                        String messageKeyBannedBy = "banBannedby";
+                        String localizedMessageBannedBy = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageBanMute(player.getUniqueId(), messageKeyBannedBy, UUIDFetcher.getUUID(name));
+                        String messageKeyBanDuration = "banDuration";
+                        String localizedMessageBanDuration = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageBanMute(player.getUniqueId(), messageKeyBanDuration, UUIDFetcher.getUUID(name));
+                        player.sendMessage("");
+                        player.sendMessage(localizedMessageBanMessage);
+                        player.sendMessage("");
+                        player.sendMessage(localizedMessageBanID);
+                        player.sendMessage(localizedMessageBanReason);
+                        player.sendMessage(localizedMessageBannedBy);
+                        player.sendMessage(localizedMessageBanDuration);
+                        player.sendMessage("");
+                    }
+                }
             }
         }
     }

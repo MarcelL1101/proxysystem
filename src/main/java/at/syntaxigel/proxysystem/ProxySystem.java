@@ -100,6 +100,11 @@ public class ProxySystem extends Plugin {
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new GetIPCommand("getip"));
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new OnlineTimeCommand("onlinetime"));
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new OnlineTimeCommand("ot"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new CoinsCommand("coins"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new CoinsCommand("money"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new CoinsCommand("coin"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new CoinsCommand("konto"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new CoinsCommand("wallet"));
 	}
 	
 	private void loadListener() {

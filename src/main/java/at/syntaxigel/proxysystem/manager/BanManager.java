@@ -1,11 +1,8 @@
 package at.syntaxigel.proxysystem.manager;
 
 import at.syntaxigel.proxysystem.ProxySystem;
-import at.syntaxigel.proxysystem.utils.BanReason;
-import at.syntaxigel.proxysystem.utils.BanReasonsLoader;
 import at.syntaxigel.proxysystem.utils.UUIDFetcher;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,13 +10,6 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class BanManager {
-
-    private final Map<Integer, BanReason> banReasons;
-
-    public BanManager() {
-        File banReasonsFile = new File(ProxySystem.getInstance().getDataFolder(), "ban.json");
-        banReasons = BanReasonsLoader.loadBanReasons(banReasonsFile);
-    }
 
     public boolean isBanned(final UUID uuid) {
         boolean isBanend = false;

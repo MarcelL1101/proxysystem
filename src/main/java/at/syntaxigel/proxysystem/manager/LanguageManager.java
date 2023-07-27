@@ -89,11 +89,13 @@ public class LanguageManager {
                 configuration.set("message.de.forum", "%prefix% Unser Forum: &3https://vanaty.de");
                 configuration.set("message.en.forum", "%prefix% Our forum: &3https://vanaty.de");
                 configuration.set("message.de.whereami", "%prefix% Du befindest dich derzeit auf dem &3%player-server% &7Server.");
-                configuration.set("message.en.whereami", "%prefix% Our forum: &3https://vanaty.de");
-                configuration.set("message.en.whereis", "%prefix% The player &3%player-name% &7is currently on the &3%player-server% &7server.");
-                configuration.set("message.de.whereis", "%prefix% Der Spieler &3%player-name% &7befindet sich derzeit auf dem &3%player-server% &7Server.");
+                configuration.set("message.en.whereami", "%prefix% You are currently on the &3%player-server% &7server.");
+                configuration.set("message.en.whereis", "%prefix% The player &3%player-name% &7is currently on the &3%target-server% &7server.");
+                configuration.set("message.de.whereis", "%prefix% Der Spieler &3%player-name% &7befindet sich derzeit auf dem &3%target-server% &7Server.");
                 configuration.set("message.de.coins", "%prefix% Du hast derzeit &e%player-coins% &7auf deinem Konto.");
                 configuration.set("message.en.coins", "%prefix% You currently have &e%player-coins% &7on your account.");
+                configuration.set("message.de.coinsTarget", "%prefix% Der Spieler &3%player-name% &7hat derzeit &e%target-coins% &7auf dem Konto.");
+                configuration.set("message.en.coinsTarget", "%prefix% The player &3%player-name% &7currently has &e%target-coins% &7in the account.");
                 configuration.set("message.de.language", "%prefix% Du hast &aerfolgreich &7die Sprache geändert.");
                 configuration.set("message.en.language", "%prefix% You have &asuccessfully &7changed the language.");
                 configuration.set("message.de.globalmuteOn", "%prefix% Du hast &aerfolgreich &7den Globalenchat aktiviert.");
@@ -114,10 +116,10 @@ public class LanguageManager {
                 configuration.set("message.en.teamAdd", "%prefix% You have &asuccessfully &7added the player &3%player-name% &7to the team.");
                 configuration.set("message.de.teamRemove", "%prefix% Du hast &aerfolgreich &7den Spieler &3%player-name% &7vom Team entfernt.");
                 configuration.set("message.en.teamRemove", "%prefix% You have &asuccessfully &7removed the player &3%player-name% &7from the team.");
-                configuration.set("message.de.teamAlready", "%prefix% Der Spieler &3%player-name% &7ist bereits im Team.");
-                configuration.set("message.en.teamAlready", "%prefix% The player &3%player-name% &7is already in the team.");
-                configuration.set("message.de.teamIsNot", "%prefix% Der Spieler &3%player-name% &7ist &cnicht &7im Team.");
-                configuration.set("message.en.teamIsNot", "%prefix% The player &3%player-name% &7is &cnot &7on the team.");
+                configuration.set("message.de.teamAlready", "%prefix% Der Spieler &3%target-name% &7ist bereits im Team.");
+                configuration.set("message.en.teamAlready", "%prefix% The player &3%target-name% &7is already in the team.");
+                configuration.set("message.de.teamIsNot", "%prefix% Der Spieler &3%target-name% &7ist &cnicht &7im Team.");
+                configuration.set("message.en.teamIsNot", "%prefix% The player &3%target-name% &7is &cnot &7on the team.");
                 configuration.set("message.de.banCount", "&8[|] &7Gebannte Spieler &8[>>] &7%banCount%");
                 configuration.set("message.en.banCount", "&8[|] &7Banned Player &8[>>] &7%banCount%");
                 configuration.set("message.de.muteCount", "&8[|] &7Gemuted Spieler &8[>>] &7%muteCount%");
@@ -134,6 +136,12 @@ public class LanguageManager {
                 configuration.set("message.en.next", "&8[>>] &aNext");
                 configuration.set("message.de.back", "&8[>>] &cZurück");
                 configuration.set("message.en.back", "&8[>>] &cBack");
+                configuration.set("message.de.banTeamMessage", "%prefix% Der Spieler &3%player-name% &7wurde vom Netzwerk gebannt!");
+                configuration.set("message.en.banTeamMessage", "%prefix% The player &3%player-name% &7has been banned from the network!");
+                configuration.set("message.de.notBanTeam", "%prefix% Du darfst &ckeine &7Teammitglieder bannen!");
+                configuration.set("message.en.notBanTeam", "%prefix% You are allowed to ban &ckany &7team members!");
+                configuration.set("message.de.alreadyBanned", "%prefix% Der Spieler &3%target-name% &7ist bereits gebannt!");
+                configuration.set("message.en.alreadyBanned", "%prefix% The player &3%target-name% &7is already banned!");
                 configuration.set("message.de.invalidPage", "%prefix% Die Seite wurde &cnicht &7gefunden.");
                 configuration.set("message.en.invalidPage", "%prefix% The page was &cnot &7found.");
                 configuration.set("message.de.banReason", "&8[>>] &7Ban Grund &8[|]&3 %ban-reason%");
@@ -201,6 +209,10 @@ public class LanguageManager {
 
         if (message.contains("%player-name%")) {
             message = message.replace("%player-name%", playername);
+        }
+
+        if (message.contains("%target-name%")) {
+            message = message.replace("%target-name%", playername);
         }
 
         if (message.contains("%banCount%")) {
@@ -278,20 +290,32 @@ public class LanguageManager {
             message = message.replace("%player-onlinetime%", String.valueOf(time));
         }
 
+        return message;
+    }
+
+    public String getLocalizedMessageBanMute(final UUID playerUUID, final String messageKey, final UUID uuid) {
+        String playerLanguage = getLanguage(playerUUID);
+
+        String message = getMessage(messageKey, playerLanguage);
+
+        if (message == null) {
+            message = getMessage(messageKey, "de");
+        }
+
         if (message.contains("%ban-reason%")) {
-            message = message.replace("%ban-reason%", ProxySystem.getInstance().banManager.getBanReason(playerUUID));
+            message = message.replace("%ban-reason%", ProxySystem.getInstance().banManager.getBanReason(uuid));
         }
 
         if (message.contains("%ban-duration%")) {
-            message = message.replace("%ban-duration%", ProxySystem.getInstance().banManager.getRemainingTime(playerUUID));
+            message = message.replace("%ban-duration%", ProxySystem.getInstance().banManager.getRemainingTime(uuid));
         }
 
         if (message.contains("%ban-banid%")) {
-            message = message.replace("%ban-banid%", String.valueOf(ProxySystem.getInstance().banManager.getBanID(playerUUID)));
+            message = message.replace("%ban-banid%", String.valueOf(ProxySystem.getInstance().banManager.getBanID(uuid)));
         }
 
         if (message.contains("%ban-bannedby%")) {
-            message = message.replace("%ban-bannedby%", ProxySystem.getInstance().banManager.getBanBannedBy(playerUUID));
+            message = message.replace("%ban-bannedby%", ProxySystem.getInstance().banManager.getBanBannedBy(uuid));
         }
 
         return message;
