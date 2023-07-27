@@ -207,6 +207,10 @@ public class LanguageManager {
             message = message.replace("%player-server%", target.getServer().getInfo().getName());
         }
 
+        if (message.contains("%target-coins%")) {
+            ProxiedPlayer target = ProxySystem.getInstance().getProxy().getPlayer(playername);
+        }
+
         if (message.contains("%player-name%")) {
             message = message.replace("%player-name%", playername);
         }
