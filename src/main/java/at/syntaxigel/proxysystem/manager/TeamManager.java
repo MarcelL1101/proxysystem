@@ -2,6 +2,7 @@ package at.syntaxigel.proxysystem.manager;
 
 import at.syntaxigel.proxysystem.ProxySystem;
 import at.syntaxigel.proxysystem.utils.UUIDFetcher;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -63,7 +64,7 @@ public class TeamManager {
             }
 
         } catch (SQLException sqlException) {
-            throw new RuntimeException(sqlException);
+            ProxySystem.getInstance().logger().log(Level.WARNING, ProxySystem.getInstance().configManager.getMessagePrefix() + "Es ist ein Fehler aufgetreten beim Abfragen von den Bans von dem Spieler §3" + UUIDFetcher.getName(uuid) + "§7. Fehler: §c" + sqlException);
         }
 
         return -1;
@@ -79,7 +80,7 @@ public class TeamManager {
             }
 
         } catch (SQLException sqlException) {
-            throw new RuntimeException(sqlException);
+            ProxySystem.getInstance().logger().log(Level.WARNING, ProxySystem.getInstance().configManager.getMessagePrefix() + "Es ist ein Fehler aufgetreten beim Abfragen von den Mutes von dem Spieler §3" + UUIDFetcher.getName(uuid) + "§7. Fehler: §c" + sqlException);
         }
 
         return -1;
@@ -95,10 +96,35 @@ public class TeamManager {
             }
 
         } catch (SQLException sqlException) {
-            throw new RuntimeException(sqlException);
+            ProxySystem.getInstance().logger().log(Level.WARNING, ProxySystem.getInstance().configManager.getMessagePrefix() + "Es ist ein Fehler aufgetreten beim Abfragen von den Reports von dem Spieler §3" + UUIDFetcher.getName(uuid) + "§7. Fehler: §c" + sqlException);
         }
 
         return -1;
+    }
+
+    public Integer getCommandSpy(final UUID uuid) {
+        try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("SELECT commandSpy FROM team WHERE uuid = ?:")) {
+            preparedStatement.setString(1, uuid.toString());
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getInt("commandSpy");
+            }
+        } catch (SQLException sqlException) {
+            ProxySystem.getInstance().logger().log(Level.WARNING, ProxySystem.getInstance().configManager.getMessagePrefix() + "Es ist ein Fehler aufgetreten beim Abfragen ob Spieler §3" + UUIDFetcher.getName(uuid) + "§7 den Wert CommandSpy aktiviert hat oder nicht. Fehler: §c" + sqlException);
+        }
+
+        return -1;
+    }
+
+    public void changeCommandSpy(final UUID uuid, final Integer value) {
+        try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("UPDATE team SET commandSpy = ? WHERE uuid = ?;")) {
+                preparedStatement.setInt(1, value);
+                preparedStatement.setString(2, uuid.toString());
+                preparedStatement.execute();
+        } catch (SQLException sqlException) {
+            ProxySystem.getInstance().logger().log(Level.WARNING, ProxySystem.getInstance().configManager.getMessagePrefix() + "Es konnte der CommandSpy nicht geändert werden. Fehler: §c" + sqlException);
+        }
     }
 
     public List<String> getTeamUUIDs() {

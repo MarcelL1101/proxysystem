@@ -162,6 +162,12 @@ public class LanguageManager {
                 configuration.set("message.en.onlineTimeTarget", "%prefix% he player %player-name% has an online time of &e%target-onlinetime% &7Minute(s)/Hour(s).");
                 configuration.set("message.de.neverPlayed", "%prefix% Der Spieler &3%player-name% &7hat noch &cnie &7auf diesem Netzwerk gespielt.");
                 configuration.set("message.en.neverPlayed", "%prefix% The player &3%player-name% &7has never &7played on this network.");
+                configuration.set("message.de.commandSpyOn", "%prefix% Du kannst jetzt alle Befehle aller Spieler sehen.");
+                configuration.set("message.en.commandSpyOn", "%prefix% You can now see all commands of all players.");
+                configuration.set("message.de.commandSpyOff", "%prefix% Du siehst jetzt die Befehle &cnicht &7mehr.");
+                configuration.set("message.en.commandSpyOff", "%prefix% You will now see the commands &cnot &7anymore.");
+                configuration.set("message.de.commandSpySee", "%prefix% Du kannst jetzt alle Befehle aller Spieler sehen.");
+                configuration.set("message.en.commandSpySee", "%prefix% You can now see all commands of all players.");
 
                 ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, file);
             } catch (IOException ioException) {

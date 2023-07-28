@@ -48,7 +48,6 @@ public class TeamCommand extends Command {
                 String messageKey = "onUse";
                 String localizedMessage = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageOnUseArguments(player.getUniqueId(), messageKey, "team", "list");
                 player.sendMessage(localizedMessage);
-                return;
             }
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("list")) {

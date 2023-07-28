@@ -105,6 +105,8 @@ public class ProxySystem extends Plugin {
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new CoinsCommand("coin"));
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new CoinsCommand("konto"));
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new CoinsCommand("wallet"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new CommandSpyCommand("commandspy"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new CommandSpyCommand("cmdspy"));
 	}
 	
 	private void loadListener() {
