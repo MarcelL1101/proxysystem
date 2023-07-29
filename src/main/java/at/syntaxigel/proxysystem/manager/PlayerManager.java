@@ -8,6 +8,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 import at.syntaxigel.proxysystem.ProxySystem;
+import at.syntaxigel.proxysystem.utils.UUIDFetcher;
 
 public class PlayerManager {
 	
@@ -44,6 +45,24 @@ public class PlayerManager {
 			ProxySystem.getInstance().logger().log(Level.WARNING, ProxySystem.getInstance().configManager.getMessagePrefix() + " Es ist ein Fehler aufgetreten beim erstellen des Spielers. Fehler: §c" + sqlException);
 		}
 	}
+
+    public Double getCoins(final UUID uuid) {
+        try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("SELECT coins FROM player WHERE uuid = ?;")) {
+            preparedStatement.setString(1, uuid.toString());
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getDouble("coins");
+            }
+
+            preparedStatement.close();
+            resultSet.close();
+        } catch (SQLException sqlException) {
+            ProxySystem.getInstance().logger().log(Level.WARNING, ProxySystem.getInstance().configManager.getMessagePrefix() + "Es ist ein Fehler aufgetreten beim Abfragen von den Coins von dem Spieler §3" + UUIDFetcher.getName(uuid) + "§7. Fehler: §c" + sqlException);
+        }
+
+        return -1.0;
+    }
 
     public Integer getOnlineTime(final UUID uuid) {
         try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("SELECT onlineTime FROM player WHERE uuid = ?;")) {

@@ -119,9 +119,9 @@ public class TeamManager {
 
     public void changeCommandSpy(final UUID uuid, final Integer value) {
         try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("UPDATE team SET commandSpy = ? WHERE uuid = ?;")) {
-                preparedStatement.setInt(1, value);
-                preparedStatement.setString(2, uuid.toString());
-                preparedStatement.execute();
+            preparedStatement.setInt(1, value);
+            preparedStatement.setString(2, uuid.toString());
+            preparedStatement.execute();
         } catch (SQLException sqlException) {
             ProxySystem.getInstance().logger().log(Level.WARNING, ProxySystem.getInstance().configManager.getMessagePrefix() + "Es konnte der CommandSpy nicht geändert werden. Fehler: §c" + sqlException);
         }

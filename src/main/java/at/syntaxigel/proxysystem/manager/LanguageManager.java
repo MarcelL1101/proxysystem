@@ -92,10 +92,10 @@ public class LanguageManager {
                 configuration.set("message.en.whereami", "%prefix% You are currently on the &3%player-server% &7server.");
                 configuration.set("message.en.whereis", "%prefix% The player &3%player-name% &7is currently on the &3%target-server% &7server.");
                 configuration.set("message.de.whereis", "%prefix% Der Spieler &3%player-name% &7befindet sich derzeit auf dem &3%target-server% &7Server.");
-                configuration.set("message.de.coins", "%prefix% Du hast derzeit &e%player-coins% &7auf deinem Konto.");
-                configuration.set("message.en.coins", "%prefix% You currently have &e%player-coins% &7on your account.");
-                configuration.set("message.de.coinsTarget", "%prefix% Der Spieler &3%player-name% &7hat derzeit &e%target-coins% &7auf dem Konto.");
-                configuration.set("message.en.coinsTarget", "%prefix% The player &3%player-name% &7currently has &e%target-coins% &7in the account.");
+                configuration.set("message.de.coins", "%prefix% Du hast derzeit &e%player-coins% &7Coins auf deinem Konto.");
+                configuration.set("message.en.coins", "%prefix% You currently have &e%player-coins% &7coins on your account.");
+                configuration.set("message.de.coinsTarget", "%prefix% Der Spieler &3%player-name% &7hat derzeit &e%target-coins% &7Coins auf dem Konto.");
+                configuration.set("message.en.coinsTarget", "%prefix% The player &3%player-name% &7currently has &e%target-coins% &7coins in the account.");
                 configuration.set("message.de.language", "%prefix% Du hast &aerfolgreich &7die Sprache geändert.");
                 configuration.set("message.en.language", "%prefix% You have &asuccessfully &7changed the language.");
                 configuration.set("message.de.globalmuteOn", "%prefix% Du hast &aerfolgreich &7den Globalenchat aktiviert.");
@@ -160,14 +160,28 @@ public class LanguageManager {
                 configuration.set("message.en.onlineTime", "%prefix% You have an online time of &e%player-onlinetime% &7Minute(s)/Hour(s).");
                 configuration.set("message.de.onlineTimeTarget", "%prefix% Der Spieler %player-name% hat eine Online Zeit von &e%target-onlinetime% &7Minute(n)/Stunde(n).");
                 configuration.set("message.en.onlineTimeTarget", "%prefix% he player %player-name% has an online time of &e%target-onlinetime% &7Minute(s)/Hour(s).");
-                configuration.set("message.de.neverPlayed", "%prefix% Der Spieler &3%player-name% &7hat noch &cnie &7auf diesem Netzwerk gespielt.");
-                configuration.set("message.en.neverPlayed", "%prefix% The player &3%player-name% &7has never &7played on this network.");
+                configuration.set("message.de.neverPlayed", "%prefix% Der Spieler &3%target-name% &7hat noch &cnie &7auf diesem Netzwerk gespielt.");
+                configuration.set("message.en.neverPlayed", "%prefix% The player &3%target-name% &7has never &7played on this network.");
                 configuration.set("message.de.commandSpyOn", "%prefix% Du kannst jetzt alle Befehle aller Spieler sehen.");
                 configuration.set("message.en.commandSpyOn", "%prefix% You can now see all commands of all players.");
                 configuration.set("message.de.commandSpyOff", "%prefix% Du siehst jetzt die Befehle &cnicht &7mehr.");
                 configuration.set("message.en.commandSpyOff", "%prefix% You will now see the commands &cnot &7anymore.");
                 configuration.set("message.de.commandSpySee", "%prefix% Du kannst jetzt alle Befehle aller Spieler sehen.");
                 configuration.set("message.en.commandSpySee", "%prefix% You can now see all commands of all players.");
+                configuration.set("message.de.report", "%prefix% Du hast dem Spieler &3%player-name% &7mit Grund &3%report-reason% &7gemeldet.");
+                configuration.set("message.en.report", "%prefix% You have reported &3%player-name% &7with reason &3%report-reason% &7to the player.");
+                configuration.set("message.de.reportReason", "&8[|] &7Report Grund &8[>>] &7%report-reason%");
+                configuration.set("message.en.reportReason", "&8[|] &7Report Reason &8[>>] &7%report-reason%");
+                configuration.set("message.de.reporter", "&8[|] &7Reporter &8[>>] &7%report-reporter%");
+                configuration.set("message.en.reporter", "&8[|] &7Reported &8[>>] &7%report-reporter%");;
+                configuration.set("message.de.reportID", "&8[|] &7Report ID &8[>>] &7%report-reportid%");
+                configuration.set("message.en.reportID", "&8[|] &7Report ID &8[>>] &7%report-reportid%");
+                configuration.set("message.de.reported", "&8[|] &7%report-reported%");
+                configuration.set("message.en.reported", "&8[|] &7%report-reported%");
+                configuration.set("message.de.reportServer", "&8[|] &7Report Server &8[>>] &7%report-server%");
+                configuration.set("message.en.reportServer", "&8[|] &7Reported Server &8[>>] &7%report-server%");
+                configuration.set("message.de.openReports", "%prefix% Es ist/sind derzeit &e%report-count% &7Reports offen.");
+                configuration.set("message.en.openReports", "%prefix% There is/are currently &e%report-count% &7reports open.");
 
                 ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, file);
             } catch (IOException ioException) {
@@ -198,6 +212,26 @@ public class LanguageManager {
         return ChatColor.translateAlternateColorCodes('&', message).replace("%prefix%", ProxySystem.getInstance().configManager.getMessagePrefix()).replace("[>>]", "»").replace("[<<]", "«").replace("[|]", "|");
     }
 
+    public String getLocalizedMessageCreateReport(final UUID playerUUID, final String messageKey, final String playername, final String reason) {
+        String playerLanguage = getLanguage(playerUUID);
+
+        String message = getMessage(messageKey, playerLanguage);
+
+        if (message == null) {
+            message = getMessage(messageKey, "de");
+        }
+
+        if (message.contains("%player-name%")) {
+            message = message.replace("%player-name%", playername);
+        }
+
+        if (message.contains("%report-reason%")) {
+            message = message.replace("%report-reason%", reason);
+        }
+
+        return message;
+    }
+
     @SuppressWarnings("deprecation")
     public String getLocalizedMessageTarget(final UUID playerUUID, final String messageKey, final String playername) {
         String playerLanguage = getLanguage(playerUUID);
@@ -215,6 +249,7 @@ public class LanguageManager {
 
         if (message.contains("%target-coins%")) {
             ProxiedPlayer target = ProxySystem.getInstance().getProxy().getPlayer(playername);
+            message = message.replace("%target-coins%", String.valueOf(ProxySystem.getInstance().playerManager.getCoins(target.getUniqueId())));
         }
 
         if (message.contains("%player-name%")) {
@@ -240,6 +275,26 @@ public class LanguageManager {
         if (message.contains("%player-ip%")) {
             ProxiedPlayer target = ProxySystem.getInstance().getProxy().getPlayer(playername);
             message = message.replace("%player-ip%", String.valueOf(target.getAddress().toString()));
+        }
+
+        if (message.contains("%report-reason%")) {
+            message = message.replace("%report-reason%", ProxySystem.getInstance().reportManager.getReportReason(UUIDFetcher.getUUID(playername)));
+        }
+
+        if (message.contains("%report-reporter%")) {
+            message = message.replace("%report-reporter%", ProxySystem.getInstance().reportManager.getReporterName(UUIDFetcher.getUUID(playername)));
+        }
+
+        if (message.contains("%report-reported%")) {
+            message = message.replace("%report-reported%", ProxySystem.getInstance().reportManager.getReportedName(UUIDFetcher.getUUID(playername)));
+        }
+
+        if (message.contains("%report-server%")) {
+            message = message.replace("%report-server%", ProxySystem.getInstance().reportManager.getReportServer(UUIDFetcher.getUUID(playername)));
+        }
+
+        if (message.contains("%report-reportid%")) {
+            message = message.replace("%report-reportid%", String.valueOf(ProxySystem.getInstance().reportManager.getReportID(UUIDFetcher.getUUID(playername))));
         }
 
         if (message.contains("%target-onlinetime%")) {
@@ -284,8 +339,16 @@ public class LanguageManager {
             message = message.replace("%teamcount%", String.valueOf(ProxySystem.getInstance().teamManager.getTeamUUIDs().size()));
         }
 
+        if (message.contains("%report-count%")) {
+            message = message.replace("%report-count%", String.valueOf(ProxySystem.getInstance().reportManager.getReportedUUIDs().size()));
+        }
+
         if (message.contains("%player-count%")) {
             message = message.replace("%player-count%", String.valueOf(ProxySystem.getInstance().serverManager.getPlayerCount()));
+        }
+
+        if (message.contains("%player-coins%")) {
+            message = message.replace("%player-coins%", String.valueOf(ProxySystem.getInstance().playerManager.getCoins(playerUUID)));
         }
 
         if (message.contains("%player-onlinetime%")) {

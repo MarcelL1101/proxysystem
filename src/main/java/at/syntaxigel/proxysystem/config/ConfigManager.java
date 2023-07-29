@@ -34,6 +34,7 @@ public class ConfigManager {
                 configuration.set("message.adminchat", "&8[>>] &4Admin&cChat &8[|] &3%player-name% &8[|] &3%player-server% &8[>>]&7 %player-message%");
                 configuration.set("server.bauserver", "Bauserver-1");
                 configuration.set("server.teamlist", "&8[>>] &3%player-name%");
+                configuration.set("server.reportlist", "&8[>>] &3%player-name%");
 
                 ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, file);
             } catch (IOException ioException) {
@@ -114,6 +115,16 @@ public class ConfigManager {
         }
 
         return configuration.getString("server.teamlist").replaceAll("&", "§").replace("%prefix%", getMessagePrefix()).replace("[>>]", "»").replace("[<<]", "«").replace("[|]", "|").replace("%player-name%", playername);
+    }
+
+    public String getReportList(final String playername) {
+        try {
+            configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
+        } catch (IOException ioException) {
+            throw new RuntimeException(ioException);
+        }
+
+        return configuration.getString("server.reportlist").replaceAll("&", "§").replace("%prefix%", getMessagePrefix()).replace("[>>]", "»").replace("[<<]", "«").replace("[|]", "|").replace("%player-name%", playername);
     }
 
 }

@@ -26,6 +26,7 @@ public class ProxySystem extends Plugin {
 	public BanManager banManager;
 	public ServerManager serverManager;
 	public TeamManager teamManager;
+	public ReportManager reportManager;
 	
 	public MySQL mysql;
 	
@@ -40,6 +41,7 @@ public class ProxySystem extends Plugin {
 		banManager = new BanManager();
 		serverManager = new ServerManager();
 		teamManager = new TeamManager();
+		reportManager = new ReportManager();
 		
 		configManager.createConfig();
 		mySQLConfigManager.createMySQLConfig();
@@ -107,6 +109,8 @@ public class ProxySystem extends Plugin {
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new CoinsCommand("wallet"));
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new CommandSpyCommand("commandspy"));
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new CommandSpyCommand("cmdspy"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new ReportCommand("report"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new ReportEditCommand("reportedit"));
 	}
 	
 	private void loadListener() {

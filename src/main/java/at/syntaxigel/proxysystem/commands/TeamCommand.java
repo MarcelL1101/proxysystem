@@ -57,7 +57,7 @@ public class TeamCommand extends Command {
 
                 if (!ProxySystem.getInstance().playerManager.existsPlayer(UUIDFetcher.getUUID(name))) {
                     String messageKey = "neverPlayed";
-                    String localizedMessage = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessage(player.getUniqueId(), messageKey);
+                    String localizedMessage = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageTarget(player.getUniqueId(), messageKey, name);
                     player.sendMessage(localizedMessage);
                     return;
                 }
