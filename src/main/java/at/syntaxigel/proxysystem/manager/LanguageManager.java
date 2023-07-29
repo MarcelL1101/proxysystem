@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -139,7 +140,9 @@ public class LanguageManager {
                 configuration.set("message.de.banTeamMessage", "%prefix% Der Spieler &3%player-name% &7wurde vom Netzwerk gebannt!");
                 configuration.set("message.en.banTeamMessage", "%prefix% The player &3%player-name% &7has been banned from the network!");
                 configuration.set("message.de.notBanTeam", "%prefix% Du darfst &ckeine &7Teammitglieder bannen!");
-                configuration.set("message.en.notBanTeam", "%prefix% You are allowed to ban &ckany &7team members!");
+                configuration.set("message.en.notBanTeam", "%prefix% The player &3%ban-name% &7is &cnot &7banned!");
+                configuration.set("message.de.isNotBanned", "%prefix% Der Spieler &3%ban-name% &7ist &cnicht &7gebannt!");
+                configuration.set("message.en.isNotBanned", "%prefix% You are allowed to ban &ckany &7team members!");
                 configuration.set("message.de.alreadyBanned", "%prefix% Der Spieler &3%target-name% &7ist bereits gebannt!");
                 configuration.set("message.en.alreadyBanned", "%prefix% The player &3%target-name% &7is already banned!");
                 configuration.set("message.de.invalidPage", "%prefix% Die Seite wurde &cnicht &7gefunden.");
@@ -148,14 +151,38 @@ public class LanguageManager {
                 configuration.set("message.en.banReason", "&8[>>] &7Ban Reason &8[|]&3 %ban-reason%");
                 configuration.set("message.de.banDuration", "&8[>>] &7Ban Dauer &8[|]&3 %ban-duration%");
                 configuration.set("message.en.banDuration", "&8[>>] &7Ban Duration &8[|]&3 %ban-duration%");
-                configuration.set("message.de.banBannedBy", "&8[>>] &7Gebannt von &8[|]&3 %ban-bannedby%");
-                configuration.set("message.en.banBannedBy", "&8[>>] &7Banned by &8[|]&3 %ban-bannedby%");
+                configuration.set("message.de.banBannedBy", "&8[>>] &7Gebannt von &8[|]&3 %ban-banner%");
+                configuration.set("message.en.banBannedBy", "&8[>>] &7Banned by &8[|]&3 %ban-banner%");
                 configuration.set("message.de.banID", "&8[>>] &7Ban ID &8[|]&3 %ban-banid%");
                 configuration.set("message.en.banID", "&8[>>] &7Ban ID &8[|]&3 %ban-banid%");
                 configuration.set("message.de.banMessageFirstLine", "&8[>>] &7Du wurdest von unserem Netzwerk gesperrt.");
                 configuration.set("message.en.banMessageFirstLine", "&8[>>] &7You were banned from our network.");
                 configuration.set("message.de.banMessageLastLine", "&8[>>] §7Falls der Ban §cnicht &7gerechtfertigt ist dann kannst du einen Antrag im Forum stellen unter §ehttps://vanaty.de");
                 configuration.set("message.en.banMessageLastLine", "&8[>>] §7If the ban §cis not &7justified then you can make a request in the forum at §ehttps://vanaty.de");
+                configuration.set("message.de.unban", "%prefix% Der Spieler &3%ban-name% &7wurde von &3%unbannedby-name% &7entbannt.");
+                configuration.set("message.en.unban", "%prefix% The player &3%ban-name% &7has been &7unbanned by &3%unbannedby-name%.");
+                configuration.set("message.de.banReason1", "Unerlaubt Clientmodifikationen");
+                configuration.set("message.en.banReason1", "Unauthorized client modifications");
+                configuration.set("message.de.banReason2", "Griefing");
+                configuration.set("message.en.banReason2", "Griefing");
+                configuration.set("message.de.banReason3", "Spielername");
+                configuration.set("message.en.banReason3", "Username");
+                configuration.set("message.de.banReason4", "Skin");
+                configuration.set("message.en.banReason4", "Skin");
+                configuration.set("message.de.banReason5", "Bugusing");
+                configuration.set("message.en.banReason5", "Bugusing");
+                configuration.set("message.de.banReason6", "Trolling");
+                configuration.set("message.en.banReason6", "Trolling");
+                configuration.set("message.de.banReason7", "Ausnutzung der Rechte");
+                configuration.set("message.en.banReason7", "Exploitation of rights");
+                configuration.set("message.de.banReason8", "Werbung");
+                configuration.set("message.en.banReason8", "Advertising");
+                configuration.set("message.de.banReason9", "Griefing");
+                configuration.set("message.en.banReason9", "Griefing");
+                configuration.set("message.de.banReason10", "Rassismus/Sexismus");
+                configuration.set("message.en.banReason10", "Racism/Sexism");
+                configuration.set("message.de.banReason11", "Wiederbetätigung");
+                configuration.set("message.en.banReason11", "Reactivation");
                 configuration.set("message.de.onlineTime", "%prefix% Du hast eine Online Zeit von &e%player-onlinetime% &7Minute(n)/Stunde(n).");
                 configuration.set("message.en.onlineTime", "%prefix% You have an online time of &e%player-onlinetime% &7Minute(s)/Hour(s).");
                 configuration.set("message.de.onlineTimeTarget", "%prefix% Der Spieler %player-name% hat eine Online Zeit von &e%target-onlinetime% &7Minute(n)/Stunde(n).");
@@ -232,6 +259,38 @@ public class LanguageManager {
         return message;
     }
 
+    public String getLocalizedMessageReport(final UUID playerUUID, final String messageKey, final String playername) {
+        String playerLanguage = getLanguage(playerUUID);
+
+        String message = getMessage(messageKey, playerLanguage);
+
+        if (message == null) {
+            message = getMessage(messageKey, "de");
+        }
+
+        if (message.contains("%report-reason%")) {
+            message = message.replace("%report-reason%", ProxySystem.getInstance().reportManager.getReportReason(UUIDFetcher.getUUID(playername)));
+        }
+
+        if (message.contains("%report-server%")) {
+            message = message.replace("%report-server%", ProxySystem.getInstance().reportManager.getReportServer(UUIDFetcher.getUUID(playername)));
+        }
+
+        if (message.contains("%report-reportid%")) {
+            message = message.replace("%report-reportid%", String.valueOf(ProxySystem.getInstance().reportManager.getReportID(UUIDFetcher.getUUID(playername))));
+        }
+
+        if (message.contains("%report-reporter%")) {
+            message = message.replace("%report-reporter%", ProxySystem.getInstance().reportManager.getReporterUUID(UUIDFetcher.getUUID(playername)));
+        }
+
+        if (message.contains("%report-reported%")) {
+            message = message.replace("%report-reported%", ProxySystem.getInstance().reportManager.getReportedUUID(UUIDFetcher.getUUID(playername)));
+        }
+
+        return message;
+    }
+
     @SuppressWarnings("deprecation")
     public String getLocalizedMessageTarget(final UUID playerUUID, final String messageKey, final String playername) {
         String playerLanguage = getLanguage(playerUUID);
@@ -277,24 +336,13 @@ public class LanguageManager {
             message = message.replace("%player-ip%", String.valueOf(target.getAddress().toString()));
         }
 
-        if (message.contains("%report-reason%")) {
-            message = message.replace("%report-reason%", ProxySystem.getInstance().reportManager.getReportReason(UUIDFetcher.getUUID(playername)));
+        if (message.contains("%ban-name%")) {
+            message = message.replace("%ban-name%", playername);
         }
 
-        if (message.contains("%report-reporter%")) {
-            message = message.replace("%report-reporter%", ProxySystem.getInstance().reportManager.getReporterName(UUIDFetcher.getUUID(playername)));
-        }
-
-        if (message.contains("%report-reported%")) {
-            message = message.replace("%report-reported%", ProxySystem.getInstance().reportManager.getReportedName(UUIDFetcher.getUUID(playername)));
-        }
-
-        if (message.contains("%report-server%")) {
-            message = message.replace("%report-server%", ProxySystem.getInstance().reportManager.getReportServer(UUIDFetcher.getUUID(playername)));
-        }
-
-        if (message.contains("%report-reportid%")) {
-            message = message.replace("%report-reportid%", String.valueOf(ProxySystem.getInstance().reportManager.getReportID(UUIDFetcher.getUUID(playername))));
+        if (message.contains("%unbannedby-name%")) {
+            final ProxiedPlayer player = ProxySystem.getInstance().getProxy().getPlayer(playerUUID);
+            message = message.replace("%unbannedby-name%", player.getName());
         }
 
         if (message.contains("%target-onlinetime%")) {
@@ -319,6 +367,11 @@ public class LanguageManager {
         
         if (message == null) {
             message = getMessage(messageKey, "de");
+        }
+
+        if (message.contains("%player-name%")) {
+            final ProxiedPlayer player = ProxySystem.getInstance().getProxy().getPlayer(playerUUID);
+            message = message.replace("%player-name%", player.getName());
         }
         
         if (message.contains("%player-ping%")) {
@@ -387,8 +440,8 @@ public class LanguageManager {
             message = message.replace("%ban-banid%", String.valueOf(ProxySystem.getInstance().banManager.getBanID(uuid)));
         }
 
-        if (message.contains("%ban-bannedby%")) {
-            message = message.replace("%ban-bannedby%", ProxySystem.getInstance().banManager.getBanBannedBy(uuid));
+        if (message.contains("%ban-banner%")) {
+            message = message.replace("%ban-banner%", ProxySystem.getInstance().banManager.getBanBannedBy(uuid));
         }
 
         return message;

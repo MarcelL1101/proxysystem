@@ -45,6 +45,7 @@ public class BroadcastCommand extends Command {
         } else {
             String messageKey = "onUse";
             String localizedMessage = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageOnUseArguments(player.getUniqueId(), messageKey, "broadcast", "message");
+            player.sendMessage(localizedMessage);
         }
     }
 

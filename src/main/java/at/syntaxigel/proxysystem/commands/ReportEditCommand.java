@@ -79,15 +79,15 @@ public class ReportEditCommand extends Command {
             String name = UUIDFetcher.getName(UUID.fromString(report));
 
             String messageKeyReportID = "reportID";
-            String localizedMessageReportID = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageTarget(player.getUniqueId(), messageKeyReportID, name);
+            String localizedMessageReportID = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageReport(player.getUniqueId(), messageKeyReportID, name);
             String messageKeyReported = "reported";
-            String localizedMessageReported = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageTarget(player.getUniqueId(), messageKeyReported, name);
+            String localizedMessageReported = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageReport(player.getUniqueId(), messageKeyReported, name);
             String messageKeyReporter = "reporter";
-            String localizedMessageReporter = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageTarget(player.getUniqueId(), messageKeyReporter, name);
+            String localizedMessageReporter = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageReport(player.getUniqueId(), messageKeyReporter, name);
             String messageKeyReportReason = "reportReason";
-            String localizedMessageReportReason = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageTarget(player.getUniqueId(), messageKeyReportReason, name);
+            String localizedMessageReportReason = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageReport(player.getUniqueId(), messageKeyReportReason, name);
             String messageKeyReportServer = "reportServer";
-            String localizedMessageReportServer = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageTarget(player.getUniqueId(), messageKeyReportServer, name);
+            String localizedMessageReportServer = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageReport(player.getUniqueId(), messageKeyReportServer, name);
 
             TextComponent textComponent = new TextComponent(ProxySystem.getInstance().configManager.getReportList(name));
             textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(localizedMessageReportID + "\n" + localizedMessageReported + "\n" + localizedMessageReporter + "\n" + localizedMessageReportReason + "\n" + localizedMessageReportServer).create()));

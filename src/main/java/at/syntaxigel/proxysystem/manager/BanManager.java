@@ -116,7 +116,7 @@ public class BanManager {
     }
 
     public String getBanBannedBy(final UUID uuid) {
-        try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM ban WHERE uuid = ?;")) {
+        try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("SELECT bannedByUUID FROM ban WHERE uuid = ?;")) {
             preparedStatement.setString(1, uuid.toString());
             ResultSet resultSet = preparedStatement.executeQuery();
 

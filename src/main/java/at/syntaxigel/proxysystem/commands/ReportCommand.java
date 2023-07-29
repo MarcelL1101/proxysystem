@@ -30,7 +30,7 @@ public class ReportCommand extends Command {
                 message = String.valueOf(message) + args[i] + " ";
             }
 
-            ProxySystem.getInstance().reportManager.createReport(UUIDFetcher.getUUID(name), name, player.getUniqueId(), player.getName(), message, player.getServer().getInfo().getName());
+            ProxySystem.getInstance().reportManager.createReport(UUIDFetcher.getUUID(name), player.getUniqueId(), message, player.getServer().getInfo().getName());
             String messageKey = "report";
             String localizedMessage = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessageCreateReport(player.getUniqueId(), messageKey, name, message);
             player.sendMessage(localizedMessage);
