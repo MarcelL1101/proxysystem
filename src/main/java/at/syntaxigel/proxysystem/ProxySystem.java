@@ -11,6 +11,9 @@ import at.syntaxigel.proxysystem.listener.PlayerListener;
 import at.syntaxigel.proxysystem.listener.ServerListener;
 import at.syntaxigel.proxysystem.manager.*;
 import at.syntaxigel.proxysystem.mysql.MySQL;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -55,11 +58,22 @@ public class ProxySystem extends Plugin {
 			throw new RuntimeException(e);
 		}
 
+		String headerKey = "header";
+		String footerKey = "footer";
+
 		getInstance().getProxy().getScheduler().schedule(this, () -> {
 			for(final ProxiedPlayer all : getInstance().getProxy().getPlayers()) {
 				playerManager.updateTime(all.getUniqueId());
 			}
 		}, 0L, 1L, TimeUnit.MINUTES);
+
+		getInstance().getProxy().getScheduler().schedule(this, () -> {
+			for(final ProxiedPlayer all : getInstance().getProxy().getPlayers()) {
+				String headerMessage = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessage(all.getUniqueId(), headerKey);
+				String footerMessage = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessage(all.getUniqueId(), footerKey);
+				all.setTabHeader(new TextComponent(headerMessage), new TextComponent(footerMessage));
+			}
+		}, 0L, 1L, TimeUnit.SECONDS);
 
 		loadCommands();
 		loadListener();

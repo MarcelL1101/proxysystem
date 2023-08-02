@@ -9,7 +9,6 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
-
 public class ConfigManager {
 	
 	private File file;
@@ -35,6 +34,10 @@ public class ConfigManager {
                 configuration.set("server.bauserver", "Bauserver-1");
                 configuration.set("server.teamlist", "&8[>>] &3%player-name%");
                 configuration.set("server.reportlist", "&8[>>] &3%player-name%");
+                configuration.set("server.motd1", "&bVanaty&3DE &8[>>] &7Minecraft Netzwerk");
+                configuration.set("server.motd2", "&eNEWS &8[>>] &cWARTUNGEN");
+                configuration.set("server.maintance", "&8[o] &cWARTUNGEN");
+                configuration.set("server.playerMaintance", "%prefix% Unser Server befindet sich in den &cWARTUNGEN");
 
                 ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, file);
             } catch (IOException ioException) {
@@ -125,6 +128,46 @@ public class ConfigManager {
         }
 
         return configuration.getString("server.reportlist").replaceAll("&", "§").replace("%prefix%", getMessagePrefix()).replace("[>>]", "»").replace("[<<]", "«").replace("[|]", "|").replace("%player-name%", playername);
+    }
+
+    public String getMOtdLine1() {
+        try {
+            configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
+        } catch (IOException ioException) {
+            throw new RuntimeException(ioException);
+        }
+
+        return configuration.getString("server.motd1").replaceAll("&", "§").replace("%prefix%", getMessagePrefix()).replace("[>>]", "»").replace("[<<]", "«").replace("[|]", "|");
+    }
+
+    public String getMOtdLine2() {
+        try {
+            configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
+        } catch (IOException ioException) {
+            throw new RuntimeException(ioException);
+        }
+
+        return configuration.getString("server.motd2").replaceAll("&", "§").replace("%prefix%", getMessagePrefix()).replace("[>>]", "»").replace("[<<]", "«").replace("[|]", "|").replace("[o]", "●");
+    }
+
+    public String getMaintance() {
+        try {
+            configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
+        } catch (IOException ioException) {
+            throw new RuntimeException(ioException);
+        }
+
+        return configuration.getString("server.maintance").replaceAll("&", "§").replace("%prefix%", getMessagePrefix()).replace("[>>]", "»").replace("[<<]", "«").replace("[|]", "|").replace("[o]", "●");
+    }
+
+    public String getMaintanceMessageForPlayer() {
+        try {
+            configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
+        } catch (IOException ioException) {
+            throw new RuntimeException(ioException);
+        }
+
+        return configuration.getString("server.playerMaintance").replaceAll("&", "§").replace("%prefix%", getMessagePrefix()).replace("[>>]", "»").replace("[<<]", "«").replace("[|]", "|").replace("[o]", "●");
     }
 
 }

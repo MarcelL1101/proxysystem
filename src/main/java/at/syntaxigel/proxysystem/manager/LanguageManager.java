@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -209,6 +211,10 @@ public class LanguageManager {
                 configuration.set("message.en.reportServer", "&8[|] &7Reported Server &8[>>] &7%report-server%");
                 configuration.set("message.de.openReports", "%prefix% Es ist/sind derzeit &e%report-count% &7Reports offen.");
                 configuration.set("message.en.openReports", "%prefix% There is/are currently &e%report-count% &7reports open.");
+                configuration.set("message.de.header", "\n&8[>>] &bVanaty&3DE &7Netzwerk &8[<<]\n\n &8[>>] &7Ping &8[|] &e%player-ping% &8[<<]\n &8[>>] &7Uhrzeit &8[|] &e%systemTime% &8[<<]\n&8[>>] &7Server &8[|] &e%player-server% &8[<<]\n &8[>>] &7Spieler &8[|] &a%playercount%&7/&c%maxPlayer% &8[<<] \n");
+                configuration.set("message.en.header", "\n&8[>>] &bVanaty&3DE &7Network &8[<<]\n\n &8[>>] &7Ping &8[|] &e%player-ping% &8[<<]\n &8[>>] &7Time &8[|] &e%systemTime% &8[<<]\n&8[>>] &7Server &8[|] &e%player-server% &8[<<]\n &8[>>] &7Player &8[|] &a%playercount%&7/&c%maxPlayer% &8[<<] \n");
+                configuration.set("message.de.footer", "\n&8[>>] &7Panel &8[|] &3https://vanaty.de &8[<<]\n &8[>>] &7Discord &8[|] &3https://discord.vanaty.de &8[<<]\n");
+                configuration.set("message.en.footer", "\n&8[>>] &7Panel &8[|] &3https://vanaty.de &8[<<]\n &8[>>] &7Discord &8[|] &3https://discord.vanaty.de &8[<<]\n");
 
                 ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, file);
             } catch (IOException ioException) {
@@ -382,6 +388,24 @@ public class LanguageManager {
             } else {
                 message = message.replace("%player-ping%", "");
             }
+        }
+
+        if (message.contains("%player-server%")) {
+            ProxiedPlayer player = ProxySystem.getInstance().getProxy().getPlayer(playerUUID);
+            message = message.replace("%player-server%", player.getServer().getInfo().getName());
+        }
+
+        if (message.contains("%systemTime%")) {
+            LocalDateTime now = LocalDateTime.now();
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+            String formattedDateTime = now.format(formatter);
+
+            message = message.replace("%systemTime%", formattedDateTime);
+        }
+
+        if (message.contains("%maxPlayer%")) {
+            message = message.replace("%maxPlayer%", String.valueOf(100));
         }
 
         if (message.contains("%playercount%")) {

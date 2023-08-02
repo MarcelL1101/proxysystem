@@ -1,6 +1,7 @@
 package at.syntaxigel.proxysystem.manager;
 
 import at.syntaxigel.proxysystem.ProxySystem;
+import at.syntaxigel.proxysystem.utils.UUIDFetcher;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.sql.Connection;
@@ -64,6 +65,20 @@ public class ServerManager {
         }
 
         return playerCount;
+    }
+
+    public Integer getMaintance() {
+        try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("SELECT maintance FROM maintance")) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getInt("maintance");
+            }
+        } catch (SQLException sqlException) {
+            ProxySystem.getInstance().logger().log(Level.WARNING, ProxySystem.getInstance().configManager.getMessagePrefix() + "Es ist ein Fehler aufgetreten beim Abfragen ob der Server in den Wartungen ist oder nicht. Fehler: §c" + sqlException);
+        }
+
+        return -1;
     }
 
 }
