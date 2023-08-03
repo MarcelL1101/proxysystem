@@ -48,6 +48,8 @@ public class ReportEditCommand extends Command {
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("list")) {
                 sendReportList(player, Integer.parseInt(args[1]));
+            } else if (args[0].equalsIgnoreCase("close")) {
+
             }
         }
     }
@@ -100,7 +102,7 @@ public class ReportEditCommand extends Command {
             String messageKeyNext = "next";
             String localizedMessageNext = ProxySystem.getInstance().langeLanguageManager.getLocalizedMessage(player.getUniqueId(), messageKeyNext);
             TextComponent nextPageComponent = new TextComponent(localizedMessageNext);
-            nextPageComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/report list " + (page + 1)));
+            nextPageComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/reportedit list " + (page + 1)));
             player.sendMessage(nextPageComponent);
             player.sendMessage(" ");
         }

@@ -45,6 +45,36 @@ public class TeamManager {
         }
     }
 
+    public void addBan(final UUID uuid) {
+        try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("UPDATE team SET ban = ? WHERE uuid = ?;")) {
+            preparedStatement.setString(1, uuid.toString());
+            preparedStatement.setInt(2, getBans(uuid) + 1);
+            preparedStatement.execute();
+        } catch (SQLException sqlException) {
+            ProxySystem.getInstance().logger().log(Level.WARNING, ProxySystem.getInstance().configManager.getMessagePrefix() + " Es ist ein Fehler aufgetreten beim updaten der Team Tabelle. Fehler §c" + sqlException);
+        }
+    }
+
+    public void addMute(final UUID uuid) {
+        try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("UPDATE team SET mute = ? WHERE uuid = ?;")) {
+            preparedStatement.setString(1, uuid.toString());
+            preparedStatement.setInt(2, getMutes(uuid) + 1);
+            preparedStatement.execute();
+        } catch (SQLException sqlException) {
+            ProxySystem.getInstance().logger().log(Level.WARNING, ProxySystem.getInstance().configManager.getMessagePrefix() + " Es ist ein Fehler aufgetreten beim updaten der Team Tabelle. Fehler §c" + sqlException);
+        }
+    }
+
+    public void addReport(final UUID uuid) {
+        try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("UPDATE team SET report = ? WHERE uuid = ?;")) {
+            preparedStatement.setString(1, uuid.toString());
+            preparedStatement.setInt(2, getReports(uuid) + 1);
+            preparedStatement.execute();
+        } catch (SQLException sqlException) {
+            ProxySystem.getInstance().logger().log(Level.WARNING, ProxySystem.getInstance().configManager.getMessagePrefix() + " Es ist ein Fehler aufgetreten beim updaten der Team Tabelle. Fehler §c" + sqlException);
+        }
+    }
+
     public void removeFromTeam(final UUID uuid) {
         try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM team WHERE uuid = ?;")) {
             preparedStatement.setString(1, uuid.toString());

@@ -46,6 +46,24 @@ public class PlayerManager {
 		}
 	}
 
+    public String getUsername(final UUID uuid) {
+        try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("SELECT username FROM player WHERE uuid = ?;")) {
+            preparedStatement.setString(1, uuid.toString());
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getString("username");
+            }
+
+            preparedStatement.close();
+            resultSet.close();
+        } catch (SQLException sqlException) {
+            ProxySystem.getInstance().logger().log(Level.WARNING, ProxySystem.getInstance().configManager.getMessagePrefix() + "Es ist ein Fehler aufgetreten beim Abfragen vom Benutzernamen. Fehler: §c" + sqlException);
+        }
+
+        return ProxySystem.getInstance().configManager.getMessagePrefix() + "Benutzername vom Spieler §3" + uuid + " §7wurde §cnicht §7gefunden.";
+    }
+
     public Double getCoins(final UUID uuid) {
         try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("SELECT coins FROM player WHERE uuid = ?;")) {
             preparedStatement.setString(1, uuid.toString());
