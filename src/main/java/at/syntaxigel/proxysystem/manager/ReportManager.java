@@ -60,6 +60,24 @@ public class ReportManager {
         return ProxySystem.getInstance().configManager.getMessagePrefix() + " Der Spieler §e" + UUIDFetcher.getName(reportedUUID) + " §7wurde §cnicht §7reported.";
     }
 
+    public String getReporterName(final UUID reporterUUID) {
+        try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("SELECT reporterUsername FROM report WHERE reporterUUID = ?;")) {
+            preparedStatement.setString(1, reporterUUID.toString());
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getString("reporterUsername");
+            }
+
+            preparedStatement.close();
+            resultSet.close();
+        } catch (SQLException sqlException) {
+            throw new RuntimeException(sqlException);
+        }
+
+        return ProxySystem.getInstance().configManager.getMessagePrefix() + " Der Spieler §e" + UUIDFetcher.getName(reporterUUID) + " §7wurde §cnicht §7reported.";
+    }
+
     public String getReportedUUID(final UUID reporterUUID) {
         try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("SELECT reportedUUID FROM report WHERE reporterUUID = ?;")) {
             preparedStatement.setString(1, reporterUUID.toString());
@@ -67,6 +85,24 @@ public class ReportManager {
 
             if (resultSet.next()) {
                 return resultSet.getString("reportedUUID");
+            }
+
+            preparedStatement.close();
+            resultSet.close();
+        } catch (SQLException sqlException) {
+            throw new RuntimeException(sqlException);
+        }
+
+        return ProxySystem.getInstance().configManager.getMessagePrefix() + " Der Spieler §e" + UUIDFetcher.getName(reporterUUID) + " §7wurde §cnicht §7reported.";
+    }
+
+    public String getReportedName(final UUID reporterUUID) {
+        try (Connection connection = ProxySystem.getInstance().mysql.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement("SELECT reportedUsername FROM report WHERE reportedUUID = ?;")) {
+            preparedStatement.setString(1, reporterUUID.toString());
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getString("reportedUsername");
             }
 
             preparedStatement.close();

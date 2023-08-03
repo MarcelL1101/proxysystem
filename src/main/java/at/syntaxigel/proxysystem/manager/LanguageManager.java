@@ -287,11 +287,11 @@ public class LanguageManager {
         }
 
         if (message.contains("%report-reporter%")) {
-            message = message.replace("%report-reporter%", ProxySystem.getInstance().reportManager.getReporterUUID(UUIDFetcher.getUUID(playername)));
+            message = message.replace("%report-reporter%", ProxySystem.getInstance().reportManager.getReporterName(UUIDFetcher.getUUID(playername)));
         }
 
         if (message.contains("%report-reported%")) {
-            message = message.replace("%report-reported%", ProxySystem.getInstance().reportManager.getReportedUUID(UUIDFetcher.getUUID(playername)));
+            message = message.replace("%report-reported%", ProxySystem.getInstance().reportManager.getReporterUUID(UUIDFetcher.getUUID(playername)));
         }
 
         return message;
