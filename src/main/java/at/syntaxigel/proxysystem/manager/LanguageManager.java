@@ -215,6 +215,8 @@ public class LanguageManager {
                 configuration.set("message.en.header", "\n&8[>>] &bVanaty&3DE &7Network &8[<<]\n\n &8[>>] &7Ping &8[|] &e%player-ping% &8[<<]\n &8[>>] &7Time &8[|] &e%systemTime% &8[<<]\n&8[>>] &7Server &8[|] &e%player-server% &8[<<]\n &8[>>] &7Player &8[|] &a%playercount%&7/&c%maxPlayer% &8[<<] \n");
                 configuration.set("message.de.footer", "\n&8[>>] &7Panel &8[|] &3https://vanaty.de &8[<<]\n &8[>>] &7Discord &8[|] &3https://discord.vanaty.de &8[<<]\n");
                 configuration.set("message.en.footer", "\n&8[>>] &7Panel &8[|] &3https://vanaty.de &8[<<]\n &8[>>] &7Discord &8[|] &3https://discord.vanaty.de &8[<<]\n");
+                configuration.set("message.de.createServer", "%prefix% Der Server &3%servername% &7mit der Adresse &3%server-address% &7und Port &3%server-port%&7.");
+                configuration.set("message.de.createServer", "%prefix% The server &3%servername% &7with the address &3%server-address% &7and port &3%server-port%&7.");
 
                 ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, file);
             } catch (IOException ioException) {
@@ -260,6 +262,30 @@ public class LanguageManager {
 
         if (message.contains("%report-reason%")) {
             message = message.replace("%report-reason%", reason);
+        }
+
+        return message;
+    }
+
+    public String getLocalizedMessageCreateServer(final UUID playerUUID, final String messageKey, final String servername, final String address, final String port) {
+        String playerLanuage = getLanguage(playerUUID);
+
+        String message = getMessage(messageKey, playerLanuage);
+
+        if (message == null) {
+            message = getMessage(messageKey, "de");
+        }
+
+        if (message.contains("%servername%")) {
+            message = message.replace("%servername%", servername);
+        }
+
+        if (message.contains("%server-address%")) {
+            message = message.replace("%server-address%", address);
+        }
+
+        if (message.contains("%server-port%")) {
+            message = message.replace("%server-port%", port);
         }
 
         return message;

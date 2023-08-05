@@ -126,6 +126,7 @@ public class ProxySystem extends Plugin {
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new ReportCommand("report"));
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new ReportEditCommand("reportedit"));
 		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new UnbanCommand("unban"));
+		ProxySystem.getInstance().getProxy().getPluginManager().registerCommand(this, new ServerCommand("manageserver"));
 	}
 	
 	private void loadListener() {
